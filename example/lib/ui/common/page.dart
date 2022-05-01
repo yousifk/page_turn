@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class AlicePage extends StatelessWidget {
   final int page;
 
-  const AlicePage({Key key, this.page}) : super(key: key);
+  const AlicePage({Key? key,required this.page}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return DefaultTextStyle.merge(

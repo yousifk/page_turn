@@ -6,7 +6,7 @@ import '../common/index.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -30,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.search),
         onPressed: () {
-          _controller.currentState.goToPage(2);
+          _controller.currentState?.goToPage(2);
         },
       ),
     );
