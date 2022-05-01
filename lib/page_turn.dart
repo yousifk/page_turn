@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'src/builders/index.dart';
 
 class PageTurn extends StatefulWidget {
@@ -11,6 +12,7 @@ class PageTurn extends StatefulWidget {
     this.initialIndex = 0,
     this.lastPage,
     this.showDragCutoff = false,
+    this.onChange,
   }) : super(key: key);
 
   final Color backgroundColor;
@@ -20,6 +22,7 @@ class PageTurn extends StatefulWidget {
   final Widget? lastPage;
   final bool showDragCutoff;
   final double cutoff;
+  final Function(int)? onChange;
 
   @override
   PageTurnState createState() => PageTurnState();
@@ -132,6 +135,7 @@ class PageTurnState extends State<PageTurn> with TickerProviderStateMixin {
       setState(() {
         pageNumber++;
       });
+    widget.onChange?.call(pageNumber);
   }
 
   Future<void> previousPage() async {
@@ -140,6 +144,7 @@ class PageTurnState extends State<PageTurn> with TickerProviderStateMixin {
       setState(() {
         pageNumber--;
       });
+    widget.onChange?.call(pageNumber);
   }
 
   Future<void> goToPage(int index) async {
@@ -163,52 +168,53 @@ class PageTurnState extends State<PageTurn> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Material(
       child: LayoutBuilder(
-        builder: (context, dimens) => GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onHorizontalDragCancel: () => _isForward = null,
-          onHorizontalDragUpdate: (details) => _turnPage(details, dimens),
-          onHorizontalDragEnd: (details) => _onDragFinish(),
-          child: Stack(
-            fit: StackFit.expand,
-            children: <Widget>[
-              if (widget.lastPage != null) ...[
-                widget.lastPage!,
-              ],
-              ...pages,
-              Positioned.fill(
-                child: Flex(
-                  direction: Axis.horizontal,
-                  children: <Widget>[
-                    Flexible(
-                      flex: (widget.cutoff * 10).round(),
-                      child: Container(
-                        color: widget.showDragCutoff
-                            ? Colors.blue.withAlpha(100)
-                            : null,
-                        child: GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          onTap: _isFirstPage ? null : previousPage,
-                        ),
-                      ),
-                    ),
-                    Flexible(
-                      flex: 10 - (widget.cutoff * 10).round(),
-                      child: Container(
-                        color: widget.showDragCutoff
-                            ? Colors.red.withAlpha(100)
-                            : null,
-                        child: GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          onTap: _isLastPage ? null : nextPage,
-                        ),
-                      ),
-                    ),
+        builder: (context, dimens) =>
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onHorizontalDragCancel: () => _isForward = null,
+              onHorizontalDragUpdate: (details) => _turnPage(details, dimens),
+              onHorizontalDragEnd: (details) => _onDragFinish(),
+              child: Stack(
+                fit: StackFit.expand,
+                children: <Widget>[
+                  if (widget.lastPage != null) ...[
+                    widget.lastPage!,
                   ],
-                ),
+                  ...pages,
+                  Positioned.fill(
+                    child: Flex(
+                      direction: Axis.horizontal,
+                      children: <Widget>[
+                        Flexible(
+                          flex: (widget.cutoff * 10).round(),
+                          child: Container(
+                            color: widget.showDragCutoff
+                                ? Colors.blue.withAlpha(100)
+                                : null,
+                            child: GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onTap: _isFirstPage ? null : previousPage,
+                            ),
+                          ),
+                        ),
+                        Flexible(
+                          flex: 10 - (widget.cutoff * 10).round(),
+                          child: Container(
+                            color: widget.showDragCutoff
+                                ? Colors.red.withAlpha(100)
+                                : null,
+                            child: GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onTap: _isLastPage ? null : nextPage,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ),
+            ),
       ),
     );
   }
